@@ -1,0 +1,1 @@
+# chs-freshmen-bot
