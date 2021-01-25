@@ -27,7 +27,7 @@ class Help(commands.Cog):
     @commands.group()
     async def help(self, ctx):
         if ctx.invoked_subcommand is None:
-            embed = create_embed(ctx, 'Bot Commands', description="Writted by David Racovan and Samuel B")
+            embed = create_embed(ctx, 'Bot Commands', description="Writted by David R and Samuel B")
             embed.add_field(name='Fun Commands', value='`chs_help fun`', inline=False)
             embed.add_field(name='Informational Commands', value='`chs_help info`', inline=False)
             embed.add_field(name='School Commands', value='`chs_help school`', inline=False)
