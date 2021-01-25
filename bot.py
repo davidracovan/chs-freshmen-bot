@@ -8,9 +8,9 @@ import classschedule
 
 # https://discord.com/api/oauth2/authorize?client_id=796805491186597968&permissions=2147483639&scope=bot
 
-with open('config.json', 'r') as f:
-    token_dict = json.load(f)
-    BOT_TOKEN = token_dict['token']
+# with open('config.json', 'r') as f:
+#     token_dict = json.load(f)
+#     BOT_TOKEN = token_dict['token']
 
 bot = commands.Bot(command_prefix='chs_', help_command=None)
 
@@ -246,4 +246,4 @@ def create_embed(ctx, title, description=None, url=None):
 def log_command(ctx):
     print(f'{ctx.author} ran {ctx.message.content}.')
 
-bot.run(BOT_TOKEN) # bot token
+bot.run(os.environ['token']) # bot token
