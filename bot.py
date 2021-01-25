@@ -13,12 +13,14 @@ import os
 #     token_dict = json.load(f)
 #     BOT_TOKEN = token_dict['token']
 
-bot = commands.Bot(command_prefix='chs_', help_command=None)
+PREFIX = 'c?'
+
+bot = commands.Bot(command_prefix=PREFIX, help_command=None)
 
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user}.')
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name='chs_help'))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f'{PREFIX}help'))
 
 class Help(commands.Cog):
     def __init__(self, bot):
@@ -28,35 +30,35 @@ class Help(commands.Cog):
     async def help(self, ctx):
         if ctx.invoked_subcommand is None:
             embed = create_embed(ctx, 'Bot Commands', description="Writted by David R and Samuel B.")
-            embed.add_field(name='Fun Commands', value='`chs_help fun`', inline=False)
-            embed.add_field(name='Informational Commands', value='`chs_help info`', inline=False)
-            embed.add_field(name='School Commands', value='`chs_help school`', inline=False)
+            embed.add_field(name='Fun Commands', value=f'`{PREFIX}help fun`', inline=False)
+            embed.add_field(name='Informational Commands', value=f'`{PREFIX}help info`', inline=False)
+            embed.add_field(name='School Commands', value=f'`{PREFIX}help school`', inline=False)
             await ctx.send(embed=embed)
             log_command(ctx)
 
     @help.command(name='fun')
     async def _fun(self, ctx):
         embed = create_embed(ctx, 'Fun Commands')
-        embed.add_field(name='chs_hello', value='Allows you to greet the bot.', inline=False)
-        embed.add_field(name='chs_8ball <question>', value='Ask a question, get an answer.', inline=False)
-        embed.add_field(name='chs_rng <minimum> <maximum>', value='Generate a random number between two numbers.', inline=False)
+        embed.add_field(name=f'{PREFIX}_hello', value='Allows you to greet the bot.', inline=False)
+        embed.add_field(name=f'{PREFIX}8ball <question>', value='Ask a question, get an answer.', inline=False)
+        embed.add_field(name=f'{PREFIX}rng <minimum> <maximum>', value='Generate a random number between two numbers.', inline=False)
         await ctx.send(embed=embed)
         log_command(ctx)
 
     @help.command(name='info')
     async def _info(self, ctx):
         embed = create_embed(ctx, 'Informational Commands')
-        embed.add_field(name='chs_ping', value="Tells you the latency of the bot (basically my WiFi speed lol).", inline=False)
+        embed.add_field(name=f'{PREFIX}ping', value="Tells you the latency of the bot (basically my WiFi speed lol).", inline=False)
         await ctx.send(embed=embed)
         log_command(ctx)
 
     @help.command(name='school')
     async def _info(self, ctx):
         embed = create_embed(ctx, 'School Commands')
-        embed.add_field(name='chs_register <blue day lunch> <gold day lunch> <cohort>', value="Example: `chs_register B D greyhound`\nAllows you to register details with the bot to get personalized responses.\nAll three values are required.\nOther commands will currently not work without registration.", inline=False)
-        embed.add_field(name='chs_schoolday [all]', value="Tells you information about today (Blue/Gold, In Person/Virtual, Late Start, weekends, breaks, etc.).\nThe `all` argument is optional, and it will display information for both cohorts.", inline=False)
-        embed.add_field(name='chs_schoolweek [all]', value="Tells you information about the next seven days.\nThe `all` argument is optional, and it will display information for both cohorts.", inline=False)
-        embed.add_field(name='chs_schooldate <date> [all]', value="Tells you information about a specified date.\nThe `date` argument is required, and must be in the form `mm/dd/yyyy`.\nThe `all` argument is optional, and it will display information for both cohorts.", inline=False)
+        embed.add_field(name=f'{PREFIX}register <blue day lunch> <gold day lunch> <cohort>', value="Example: `chs_register B D greyhound`\nAllows you to register details with the bot to get personalized responses.\nAll three values are required.\nOther commands will currently not work without registration.", inline=False)
+        embed.add_field(name=f'{PREFIX}schoolday [all]', value="Tells you information about today (Blue/Gold, In Person/Virtual, Late Start, weekends, breaks, etc.).\nThe `all` argument is optional, and it will display information for both cohorts.", inline=False)
+        embed.add_field(name=f'{PREFIX}schoolweek [all]', value="Tells you information about the next seven days.\nThe `all` argument is optional, and it will display information for both cohorts.", inline=False)
+        embed.add_field(name=f'{PREFIX}schooldate <date> [all]', value="Tells you information about a specified date.\nThe `date` argument is required, and must be in the form `mm/dd/yyyy`.\nThe `all` argument is optional, and it will display information for both cohorts.", inline=False)
         await ctx.send(embed=embed)
         log_command(ctx)
 
