@@ -110,11 +110,13 @@ class School(commands.Cog):
     
     @commands.command()
     async def schoolday(self, ctx, arg=None):
-        if not self._registration_checks(ctx) and arg != "all":
-            embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
-            await ctx.send(embed=embed)
-            return
-        user_info = self._get_user_info(str(ctx.author.id))
+        if not self._registration_checks(ctx):
+            if arg != "all":
+                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
+                await ctx.send(embed=embed)
+                return
+        else:
+            user_info = self._get_user_info(str(ctx.author.id))
         if arg == "all":
             school_day = classschedule.get_current_day()
             desc = f'Today is {datetime.now().strftime("%A, %B %d, %Y")}.\nCarmel Cohort: {school_day[0]}.\nGreyhound Cohort: {school_day[1]}.\n'
@@ -127,11 +129,13 @@ class School(commands.Cog):
     
     @commands.command()
     async def schoolweek(self, ctx, arg=None):
-        if not self._registration_checks(ctx) and arg != "all":
-            embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
-            await ctx.send(embed=embed)
-            return
-        user_info = self._get_user_info(str(ctx.author.id))
+        if not self._registration_checks(ctx):
+            if arg != "all":
+                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
+                await ctx.send(embed=embed)
+                return
+        else:
+            user_info = self._get_user_info(str(ctx.author.id))
         if arg == "all":
             school_weeks = classschedule.get_week()
             embed = create_embed(ctx, 'School Week')
@@ -147,11 +151,13 @@ class School(commands.Cog):
     
     @commands.command()
     async def schooldate(self, ctx, date, arg=None):
-        user_info = self._get_user_info(str(ctx.author.id))
-        if not self._registration_checks(ctx) and arg != "all":
-            embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
-            await ctx.send(embed=embed)
-            return
+        if not self._registration_checks(ctx):
+            if arg != "all":
+                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
+                await ctx.send(embed=embed)
+                return
+        else:
+            user_info = self._get_user_info(str(ctx.author.id))
         if arg == "all":
             school_day = classschedule.get_day(date)
             desc = f'Carmel Cohort: {school_day[0]}\nGreyhound Cohort: {school_day[1]}\n'
