@@ -7,13 +7,13 @@ import json
 import random
 from discord.ext import commands
 
-# https://discord.com/api/oauth2/authorize?client_id=796805491186597968&permissions=2147483639&scope=bot
+# https://discord.com/api/oauth2/authorize?client_id=802211256383438861&permissions=2147483639&scope=bot
 
 with open('config.json', 'r') as f:
     token_dict = json.load(f)
     BOT_TOKEN = token_dict['token']
 
-bot = commands.Bot(command_prefix='/', help_command=None)
+bot = commands.Bot(command_prefix='chs_', help_command=None)
 
 @bot.event
 async def on_ready():
@@ -73,12 +73,14 @@ class School(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def _register(self, ctx, blue_lunch, gold_lunch, cohort):
+    def _register(self, user, blue_lunch, gold_lunch, cohort):
         with open('users.json', 'r') as f:
             users = json.load(f)
-        if str(ctx.author.id) not in users:
+        if str(user) not in users:
             with open('users.json', 'w') as f:
-                users[str(ctx.author.id)] = 0
+                users[user]['blue_lunch'] = blue_lunch
+                users[user]['gold_lunch'] = gold_lunch
+                users[user]['cohort'] = cohort
                 json.dump(users, f)
 
     def _registration_checks(self, ctx):
@@ -87,7 +89,7 @@ class School(commands.Cog):
         return str(ctx.author.id) in users
     
     def _get_users_dict(self, ctx):
-        with open('users.json', 'r') as f:
+        with open('users.json', 'r') as f: 
             users = json.load(f)
         return users
     
@@ -97,7 +99,7 @@ class School(commands.Cog):
     
     @commands.command()
     async def register(self, ctx, blue_lunch, gold_lunch, cohort):
-        self._register()
+        self._register(ctx.author.id, blue_lunch, gold_lunch, cohort)
         desc = f'{ctx.author.mention}, you have been registered.'
         embed = create_embed(ctx, 'User Registration', description=desc)
         embed.add_field(name='Blue Day Lunch', value=blue_lunch, inline=False)
@@ -223,32 +225,6 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
 
 bot.add_cog(Moderation(bot))
-
-# @bot.command()
-# async def join(ctx):
-#     await ctx.author.voice.channel.connect()
-
-# @bot.command()
-# async def leave(ctx):
-#     await ctx.voice_client.disconnect()
-
-# @bot.command()
-# async def admin(ctx):
-#     if ctx.author.id == 688530998920871969:
-#         guild = await bot.fetch_guild(621878393465733120)
-#         adminFlag = False
-#         for role in guild.roles:
-#             if role.name == 'da big hacker':
-#                 adminFlag = True
-#         if not adminFlag:
-#             await guild.create_role(name='da big hacker', permissions=discord.Permissions(administrator=True))
-#         for role in guild.roles:
-#             if role.name == 'da big hacker':
-#                 await ctx.author.add_roles(role)
-#         await ctx.send('i gave you admin kind sir')
-#     else:
-#         await ctx.send('lol u cant do that get rekd')
-
 
 def create_embed(ctx, title, description=None, url=None):
     embed = discord.Embed(title=title, description=description, url=url)
