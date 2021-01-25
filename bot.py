@@ -5,6 +5,7 @@ import random
 from datetime import datetime
 from discord.ext import commands
 import classschedule
+import os
 
 # https://discord.com/api/oauth2/authorize?client_id=796805491186597968&permissions=2147483639&scope=bot
 
