@@ -53,7 +53,7 @@ class Help(commands.Cog):
         log_command(ctx)
 
     @help.command(name='school')
-    async def _info(self, ctx):
+    async def _school(self, ctx):
         embed = create_embed(ctx, 'School Commands')
         embed.add_field(name=f'{PREFIX}register <blue day lunch> <gold day lunch> <cohort>', value="Example: `chs_register B D greyhound`\nAllows you to register details with the bot to get personalized responses.\nAll three values are required.\nOther commands will currently not work without registration.", inline=False)
         embed.add_field(name=f'{PREFIX}schoolday [all]', value="Tells you information about today (Blue/Gold, In Person/Virtual, Late Start, weekends, breaks, etc.).\nThe `all` argument is optional, and it will display information for both cohorts.", inline=False)
