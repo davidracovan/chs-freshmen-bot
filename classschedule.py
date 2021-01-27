@@ -3,16 +3,14 @@ import re
 import math
 from datetime import date,datetime,time,timedelta
 
-NOW = datetime.now()
-
 with open("school_info.json") as f:
     SCHOOL_INFO_DICT = json.load(f)
 
 def get_current_day(user_info=None):
     if user_info:
-        current_day = SCHOOL_INFO_DICT["days"][user_info["cohort"]][NOW.strftime("%m/%d/%Y")]
+        current_day = SCHOOL_INFO_DICT["days"][user_info["cohort"]][datetime.now().strftime("%m/%d/%Y")]
     else:
-        current_day = SCHOOL_INFO_DICT["days"]["carmel"][NOW.strftime("%m/%d/%Y")], SCHOOL_INFO_DICT["days"]["greyhound"][NOW.strftime("%m/%d/%Y")]
+        current_day = SCHOOL_INFO_DICT["days"]["carmel"][datetime.now().strftime("%m/%d/%Y")], SCHOOL_INFO_DICT["days"]["greyhound"][datetime.now().strftime("%m/%d/%Y")]
     return current_day
 
 def get_day(date, user_info=None):
@@ -26,7 +24,7 @@ def get_week(user_info=None):
     if user_info:
         current_week = []
         for i in range (7):
-            target_day = NOW + timedelta(days = i + 1)
+            target_day = datetime.now() + timedelta(days = i + 1)
             current_week.append(target_day.strftime("%a, %b %d, %Y: ")
                 + SCHOOL_INFO_DICT["days"][user_info["cohort"]][target_day.strftime("%m/%d/%Y")])
         return current_week
@@ -34,7 +32,7 @@ def get_week(user_info=None):
         current_week_1 = []
         current_week_2 = []
         for i in range (7):
-            target_day = NOW + timedelta(days = i + 1)
+            target_day = datetime.now() + timedelta(days = i + 1)
             current_week_1.append(target_day.strftime("%a, %b %d, %Y: ")
                 + SCHOOL_INFO_DICT["days"]['carmel'][target_day.strftime("%m/%d/%Y")])
             current_week_2.append(target_day.strftime("%a, %b %d, %Y: ")
@@ -53,7 +51,7 @@ def get_week(user_info=None):
 
 
 # # setting values
-# current_day = SCHOOL_INFO_DICT["days"][user_information["cohort"]][NOW.strftime("%m/%d/%Y")]
+# current_day = SCHOOL_INFO_DICT["days"][user_information["cohort"]][datetime.now().strftime("%m/%d/%Y")]
 # if("Late" in current_day):
 #     day_type = "late"
 # elif(re.search("(Blue|Gold)",current_day)):
@@ -79,8 +77,8 @@ def get_week(user_info=None):
 # if(day_type != "none"):
 #     for item in sorted(current_class_dict.keys()):
 #         if(not current_class_result):
-#             formatted_item = datetime.combine(NOW,datetime.strptime(item,"%H:%M").time())
-#             time_between_dates = formatted_item - NOW
+#             formatted_item = datetime.combine(datetime.now(),datetime.strptime(item,"%H:%M").time())
+#             time_between_dates = formatted_item - datetime.now()
 #             if(time_between_dates > timedelta()): # if time_between_dates is greater than zero
 #                 new_item = datetime.strptime(item,"%H:%M").strftime("%I:%M %p")
 #                 current_class_result += "%s%s minute(s) (%s)." % (current_class_dict[formatted_item.strftime("%H:%M")],
@@ -88,7 +86,7 @@ def get_week(user_info=None):
 #         elif(current_class_result):
 #             day_overview_raw_blocks.append(overview_dict[item])
 #     if(not current_class_result):
-#         time_between_dates = datetime.strptime("15:45","%H:%M") - NOW
+#         time_between_dates = datetime.strptime("15:45","%H:%M") - datetime.now()
 #         current_class_result += "Block 4 ended %s minutes ago (3:45 PM)." % (time_between_dates)
 #         day_status = "finished"
 # else:
@@ -112,8 +110,8 @@ def get_week(user_info=None):
 # # weekOverview
 # week_overview_result = "Week Overview"
 # for i in range (7):
-#     week_overview_result += ("\n" + (NOW + timedelta(days = i + 1)).strftime("%a, %b %d, %Y: ")
-#     + SCHOOL_INFO_DICT["days"][user_information["cohort"]][(NOW + timedelta(days = i + 1)).strftime("%m/%d/%Y")])
+#     week_overview_result += ("\n" + (datetime.now() + timedelta(days = i + 1)).strftime("%a, %b %d, %Y: ")
+#     + SCHOOL_INFO_DICT["days"][user_information["cohort"]][(datetime.now() + timedelta(days = i + 1)).strftime("%m/%d/%Y")])
 
 # # finalResult
 # final_result = date_result + "\n\n" + current_class_result + "\n\n" + day_overview_result + "\n\n" + week_overview_result
