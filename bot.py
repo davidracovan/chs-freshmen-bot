@@ -81,11 +81,26 @@ class School(commands.Cog):
                 }
                 json.dump(school_dict, f)
 
+    def _register_class(self, user_id, class_type: str, class_name):
+        with open('school.json', 'r') as f:
+            school_dict = json.load(f)
+        if str(user_id) not in school_dict:
+            with open('school.json', 'w') as f:
+                if not school_dict[str(user_id)]['classes']:
+                    school_dict[str(user_id)]['classes'] = {}
+                school_dict[str(user_id)]['classes'][class_type] = class_name
+                json.dump(school_dict, f)
+
     def _registration_checks(self, ctx):
         with open('school.json', 'r') as f:
             school_dict = json.load(f)
         return str(ctx.author.id) in school_dict
     
+    def _class_registration_checks(self, ctx, class_type):
+        with open('school.json', 'r') as f:
+            school_dict = json.load(f)
+        return str(ctx.author.id) in school_dict
+
     def _get_users_dict(self):
         with open('school.json', 'r') as f: 
             school_dict = json.load(f)
@@ -112,65 +127,93 @@ class School(commands.Cog):
         log_command(ctx)
     
     @commands.command()
+    async def register(self, ctx, blue_lunch, gold_lunch, cohort):
+        self._register(ctx.author.id, blue_lunch, gold_lunch, cohort)
+        desc = f'You have been registered.'
+        embed = create_embed(ctx, 'User Registration', description=desc)
+        embed.add_field(name='Blue Day Lunch', value=blue_lunch, inline=False)
+        embed.add_field(name='Gold Day Lunch', value=gold_lunch, inline=False)
+        embed.add_field(name='Cohort', value=cohort, inline=False)
+        await ctx.send(embed=embed)
+        log_command(ctx)
+    
+    @commands.command(name='registerclass')
+    async def register_class(self, ctx, class_type, class_name):
+        self._register_class(ctx.author.id, class_type.lower(), class_name)
+        desc = f'{ctx.author.mention}, you have been registered.'
+        embed = create_embed(ctx, 'Class Registration', description=desc)
+        embed.add_field(name=class_type, value=class_name, inline=False)
+        await ctx.send(embed=embed)
+        log_command(ctx)
+    
+    @commands.group()
     async def schoolday(self, ctx, arg=None):
-        if not self._registration_checks(ctx):
-            if arg != "all":
+        if ctx.invoked_subcommand is None:
+            if not self._registration_checks(ctx):
                 embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
                 await ctx.send(embed=embed)
                 return
-        else:
             user_info = self._get_user_info(str(ctx.author.id))
-        if arg == "all":
-            school_day = classschedule.get_current_day()
-            desc = f'Today is {datetime.now().strftime("%A, %B %d, %Y")}.\nCarmel Cohort: {school_day[0]}.\nGreyhound Cohort: {school_day[1]}.\n'
-            embed = create_embed(ctx, 'School Day', desc)
-        else:
             school_day = classschedule.get_current_day(user_info)
             desc = f'Today is {datetime.now().strftime("%A, %B %d, %Y")}.\nYour Cohort ({user_info["cohort"].title()}): {school_day}'
             embed = create_embed(ctx, 'School Day', desc)
-        await ctx.send(embed=embed)
-    
-    @commands.command()
-    async def schoolweek(self, ctx, arg=None):
-        if not self._registration_checks(ctx):
-            if arg != "all":
-                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
-                await ctx.send(embed=embed)
-                return
-        else:
-            user_info = self._get_user_info(str(ctx.author.id))
-        if arg == "all":
-            school_weeks = classschedule.get_week()
-            embed = create_embed(ctx, 'School Week')
-            value1="\n".join(school_weeks[0])
-            embed.add_field(name="Carmel Cohort", value=value1)
-            value2="\n".join(school_weeks[1])
-            embed.add_field(name="Greyhound Cohort", value=value2)
-        else:
-            school_week = classschedule.get_week(user_info)
-            desc = "\n".join(school_week)
-            embed = create_embed(ctx, 'School Week', desc)
-        await ctx.send(embed=embed)
-    
-    @commands.command()
-    async def schooldate(self, ctx, date, arg=None):
-        if not self._registration_checks(ctx):
-            if arg != "all":
-                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
-                await ctx.send(embed=embed)
-                return
-        else:
-            user_info = self._get_user_info(str(ctx.author.id))
-        if arg == "all":
-            school_day = classschedule.get_day(date)
-            desc = f'Carmel Cohort: {school_day[0]}\nGreyhound Cohort: {school_day[1]}\n'
-            embed = create_embed(ctx, 'School Day', desc)
             await ctx.send(embed=embed)
-        else:
+            log_command(ctx)
+    
+    @schoolday.command(name='all')
+    async def day_all(self, ctx):
+        school_day = classschedule.get_current_day()
+        desc = f'Today is {datetime.now().strftime("%A, %B %d, %Y")}.\nCarmel Cohort: {school_day[0]}.\nGreyhound Cohort: {school_day[1]}.\n'
+        embed = create_embed(ctx, 'School Day', desc)
+        await ctx.send(embed=embed)
+        log_command(ctx)
+
+    @commands.group()
+    async def schoolweek(self, ctx):
+        if ctx.invoked_subcommand is None:
+            if not self._registration_checks(ctx):
+                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
+                await ctx.send(embed=embed)
+                return
+            user_info = self._get_user_info(str(ctx.author.id))
+            school_week = classschedule.get_week(user_info)
+            desc = '\n'.join(school_week)
+            embed = create_embed(ctx, 'School Week', desc)
+            await ctx.send(embed=embed)
+            log_command(ctx)
+    
+    @schoolweek.command(name='all')
+    async def schoolweek_all(self, ctx):
+        school_weeks = classschedule.get_week()
+        embed = create_embed(ctx, 'School Week')
+        value1='\n'.join(school_weeks[0])
+        embed.add_field(name='Carmel Cohort', value=value1)
+        value2='\n'.join(school_weeks[1])
+        embed.add_field(name='Greyhound Cohort', value=value2)
+        await ctx.send(embed=embed)
+        log_command(ctx)
+    
+    @commands.group()
+    async def schooldate(self, ctx, date):
+        if ctx.invoked_subcommand is None:
+            if not self._registration_checks(ctx):
+                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
+                await ctx.send(embed=embed)
+                return
+            user_info = self._get_user_info(str(ctx.author.id))
             school_day = classschedule.get_day(date, user_info)
             desc = f'Your Cohort ({user_info["cohort"].title()}): {school_day}'
             embed = create_embed(ctx, 'School Day', desc)
             await ctx.send(embed=embed)
+            log_command(ctx)
+    
+    @schooldate.command(name='all')
+    async def schooldate_all(self, ctx, date):
+        school_day = classschedule.get_day(date)
+        desc = f'Carmel Cohort: {school_day[0]}\nGreyhound Cohort: {school_day[1]}\n'
+        embed = create_embed(ctx, 'School Day', desc)
+        await ctx.send(embed=embed)
+        log_command(ctx)
 
 bot.add_cog(School(bot)) 
 
