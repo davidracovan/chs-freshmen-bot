@@ -230,29 +230,35 @@ class Fun(commands.Cog):
     @commands.command(name='8ball')
     async def eightball(self, ctx, arg):
         responses = [
-            ":green_circle: As I see it, yes. :green_circle:",
-            ":yellow_circle: Ask again later. :yellow_circle:",
-            ":yellow_circle: Better not tell you now. :yellow_circle:",
-            ":yellow_circle: Cannot predict now. :yellow_circle:",
-            ":yellow_circle: Concentrate and ask again. :yellow_circle:",
-            ":red_circle: Don’t count on it. :red_circle:",
-            ":green_circle: It is certain. :green_circle:",
-            ":green_circle: It is decidedly so. :green_circle:",
-            ":green_circle: Most likely. :green_circle:",
-            ":red_circle: My reply is no. :red_circle:",
-            ":red_circle: My sources say no. :red_circle:",
-            ":red_circle: Outlook not so good. :red_circle:",
-            ":green_circle: Outlook good. :green_circle:",
-            ":yellow_circle: Reply hazy, try again. :yellow_circle:",
-            ":green_circle: Signs point to yes. :green_circle:",
-            ":red_circle: Very doubtful. :red_circle:",
-            ":green_circle: Without a doubt. :green_circle:",
-            ":green_circle: Yes. :green_circle:",
-            ":green_circle: Yes, definitely. :green_circle:",
-            ":green_circle: You may rely on it. :green_circle:"
+            [
+                ':green_circle: As I see it, yes. :green_circle:',
+                ':green_circle: It is certain. :green_circle:',
+                ':green_circle: It is decidedly so. :green_circle:',
+                ':green_circle: Most likely. :green_circle:',
+                ':green_circle: Outlook good. :green_circle:',
+                ':green_circle: Signs point to yes. :green_circle:',
+                ':green_circle: Without a doubt. :green_circle:',
+                ':green_circle: Yes. :green_circle:',
+                ':green_circle: Yes, definitely. :green_circle:',
+                ':green_circle: You may rely on it. :green_circle:'
+            ],
+            [
+                ':red_circle: Very doubtful. :red_circle:',
+                ':red_circle: My reply is no. :red_circle:',
+                ':red_circle: My sources say no. :red_circle:',
+                ':red_circle: Outlook not so good. :red_circle:',
+                ':red_circle: Don’t count on it. :red_circle:',
+            ],
+            [
+                ':yellow_circle: Ask again later. :yellow_circle:',
+                ':yellow_circle: Better not tell you now. :yellow_circle:',
+                ':yellow_circle: Cannot predict now. :yellow_circle:',
+                ':yellow_circle: Concentrate and ask again. :yellow_circle:',
+                ':yellow_circle: Reply hazy, try again. :yellow_circle:',
+            ],
         ]
-
-        desc = responses[random.randint(0,19)]
+        response_category = responses[random.randint(0,2)]
+        desc = response_category[random.randint(0, len(response_category)-1)]
         embed = create_embed(ctx, 'Magic 8 Ball', description=desc)
         await ctx.send(embed=embed)
         log_command(ctx)
