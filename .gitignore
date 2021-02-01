@@ -1,2 +1,6 @@
 .DS_Store
 config.json
+.env
+__pycache__/
+*.lock
+*.toml
