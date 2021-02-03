@@ -30,8 +30,8 @@ class Help(commands.Cog):
     @commands.group()
     async def help(self, ctx):
         if ctx.invoked_subcommand is None:
-            author1 = self.bot.guild.get_user(688530998920871969)
-            author2 = self.bot.guild.get_user(654874992672112650)
+            author1 = await ctx.guild.fetch_member(688530998920871969)
+            author2 = await ctx.guild.fetch_member(654874992672112650)
             embed = create_embed(ctx, 'Bot Commands', description=f"Written by {author1.mention} and {author2.mention}.")
             embed.add_field(name='Fun Commands', value=f'`{PREFIX}help fun`', inline=False)
             embed.add_field(name='Informational Commands', value=f'`{PREFIX}help info`', inline=False)
