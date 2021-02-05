@@ -25,7 +25,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.author.id != 796805491186597968 and message.channel.id == 710959620667211817:
+    if message.author.id != 796805491186597968 and message.channel.id == 801630163866746904:
         await message.add_reaction('<:upvote:711333713316937819>')
         await message.add_reaction('<:downvote:711333713354686484>')
     await bot.process_commands(message)
