@@ -23,6 +23,13 @@ async def on_ready():
     print(f'Logged in as {bot.user}.')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f'{PREFIX}help'))
 
+@bot.event
+async def on_message(message):
+    if message.author.id != 796805491186597968 and message.channel.id == 710959620667211817:
+        await message.add_reaction('<:upvote:711333713316937819>')
+        await message.add_reaction('<:downvote:711333713354686484>')
+    await bot.process_commands(message)
+
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
