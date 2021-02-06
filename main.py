@@ -319,7 +319,7 @@ class Suggestions(commands.Cog):
     @commands.cooldown(1, 120, type=commands.BucketType.user)
     async def suggest(self, ctx, *, arg):
         suggestions_channel = self.bot.get_channel(710959620667211817)
-        embed = create_embed(ctx, "Suggestion", arg)
+        embed = create_embed(ctx, "Suggestion", arg, footer_enabled=False)
         msg = await suggestions_channel.send(embed=embed)
         await msg.add_reaction('<:upvote:711333713316937819>')
         await msg.add_reaction('<:downvote:711333713354686484>')
@@ -338,12 +338,13 @@ class Suggestions(commands.Cog):
 
 bot.add_cog(Suggestions(bot))
 
-def create_embed(ctx, title, description=None, url=None, color=None):
+def create_embed(ctx, title, description=None, url=None, color=None, footer_enabled=True):
     if not color:
         color = discord.Embed.Empty
     embed = discord.Embed(title=title, description=description, url=url, color=color)
     embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
-    embed.set_footer(text=f'Server: {ctx.guild} | Command: {ctx.message.content}', icon_url=ctx.guild.icon_url)
+    if footer_enabled:
+        embed.set_footer(text=f'Server: {ctx.guild} | Command: {ctx.message.content}', icon_url=ctx.guild.icon_url)
     return embed
 
 def log_command(ctx):
