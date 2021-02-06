@@ -4,10 +4,10 @@ import json
 import random
 from datetime import datetime
 from discord.ext import commands
-from discord.message import PartialMessage
 import classschedule
 import os
 from keep_alive import keep_alive
+import datetime
 
 # https://discord.com/api/oauth2/authorize?client_id=796805491186597968&permissions=2147483639&scope=bot
 
@@ -32,7 +32,8 @@ class CommandErrorHandler(commands.Cog):
     async def on_command_error(self, ctx, error):
         color = discord.Color.red()
         if isinstance(error, commands.CommandOnCooldown):
-            embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {round(error.retry_after, 1)}s.", color=color)
+            retry_time = datetime.timedelta(second=round(error.retry_after, 1))
+            embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {retry_time.strftime('%-Mm%Ss')}s.", color=color)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
             embed = create_embed(ctx, "Error", f"You do not have the required permission to run this command ({','.join(error.missing_perms)}).", color=color)
