@@ -31,8 +31,6 @@ class CommandErrorHandler(commands.Cog):
     async def on_command_error(self, ctx, error):
         color = discord.Color.red()
         if isinstance(error, commands.CommandOnCooldown):
-            retry_time = datetime.timedelta(second=round(error.retry_after, 1))
-            
             embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {time.strftime('%Mm %Ss', time.gmtime(round(error.retry_after, 1)))}.", color=color)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
@@ -317,7 +315,7 @@ class Suggestions(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.cooldown(1, 120, type=commands.BucketType.user)
+    @commands.cooldown(1, 900, type=commands.BucketType.user)
     async def suggest(self, ctx, *, arg):
         suggestions_channel = self.bot.get_channel(710959620667211817)
         embed = create_embed(ctx, "Suggestion", arg, footer_enabled=False)
