@@ -4,9 +4,10 @@ import json
 import random
 from datetime import datetime
 from discord.ext import commands
+from discord.message import PartialMessage
 import classschedule
 import os
-from keep_alive import keep_alive
+# from keep_alive import keep_alive
 
 # https://discord.com/api/oauth2/authorize?client_id=796805491186597968&permissions=2147483639&scope=bot
 
@@ -23,12 +24,30 @@ async def on_ready():
     print(f'Logged in as {bot.user}.')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f'{PREFIX}help'))
 
-@bot.event
-async def on_message(message):
-    if message.author.id != 796805491186597968 and message.channel.id == 801630163866746904:
-        await message.add_reaction('<:upvote:711333713316937819>')
-        await message.add_reaction('<:downvote:711333713354686484>')
-    await bot.process_commands(message)
+# @bot.event
+# async def on_message(message):
+#     if message.author.id != 796805491186597968 and message.channel.id == 801630163866746904:
+#         await message.add_reaction('<:upvote:711333713316937819>')
+#         await message.add_reaction('<:downvote:711333713354686484>')
+#     await bot.process_commands(message)
+
+class CommandErrorHandler(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        color = discord.Color.red()
+        if isinstance(error, commands.CommandOnCooldown):
+            embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {round(error.retry_after, 1)}s.", color=color)
+            await ctx.send(embed=embed)
+        elif isinstance(error, commands.MissingPermissions):
+            embed = create_embed(ctx, "Error", f"You do not have the required permission to run this command ({','.join(error.missing_perms)}).", color=color)
+            await ctx.send(embed=embed)
+        else:
+            raise error
+
+bot.add_cog(CommandErrorHandler(bot))
 
 class Help(commands.Cog):
     def __init__(self, bot):
@@ -299,8 +318,37 @@ class Info(commands.Cog):
 
 bot.add_cog(Info(bot))
 
-def create_embed(ctx, title, description=None, url=None):
-    embed = discord.Embed(title=title, description=description, url=url)
+class Suggestions(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    @commands.cooldown(1, 120, type=commands.BucketType.user)
+    async def suggest(self, ctx, *, arg):
+        suggestions_channel = self.bot.get_channel(710959620667211817)
+        embed = create_embed(ctx, "Suggestion", arg)
+        msg = await suggestions_channel.send(embed=embed)
+        await msg.add_reaction('<:upvote:711333713316937819>')
+        await msg.add_reaction('<:downvote:711333713354686484>')
+        embed = create_embed(ctx, "Suggestion", "Your suggestion has been submitted successfully.")
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.has_permissions(manage_messages=True)
+    async def removesuggestion(self, ctx, arg: int):
+        suggestions_channel = self.bot.get_channel(710959620667211817)
+        msg = await suggestions_channel.fetch_message(arg)
+        await msg.delete()
+        desc = f"Suggestion with ID {arg} has been removed."
+        embed = create_embed(ctx, "Suggestion Removal", description=desc)
+        await ctx.send(embed=embed)
+
+bot.add_cog(Suggestions(bot))
+
+def create_embed(ctx, title, description=None, url=None, color=None):
+    if not color:
+        color = discord.Embed.Empty
+    embed = discord.Embed(title=title, description=description, url=url, color=color)
     embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
     embed.set_footer(text=f'Server: {ctx.guild} | Command: {ctx.message.content}', icon_url=ctx.guild.icon_url)
     return embed
@@ -308,5 +356,6 @@ def create_embed(ctx, title, description=None, url=None):
 def log_command(ctx):
     print(f'{ctx.author} ran {ctx.message.content}.')
 
-keep_alive()
-bot.run(os.environ['TOKEN']) # bot token
+# keep_alive()
+# bot.run(os.environ['TOKEN']) # bot token
+bot.run("ODAyMjExMjU2MzgzNDM4ODYx.YAr7cw.bSz5W35uODQtGwD2aDY41Ekegl0")
