@@ -319,11 +319,11 @@ class Suggestions(commands.Cog):
     @commands.cooldown(1, 120, type=commands.BucketType.user)
     async def suggest(self, ctx, *, arg):
         suggestions_channel = self.bot.get_channel(710959620667211817)
-        embed = create_embed(ctx, "Suggestion", arg, footer_enabled=False)
+        embed = create_embed(ctx, "Suggestion", arg, show_command=False)
         msg = await suggestions_channel.send(embed=embed)
         await msg.add_reaction('<:upvote:711333713316937819>')
         await msg.add_reaction('<:downvote:711333713354686484>')
-        embed = create_embed(ctx, "Suggestion", "Your suggestion has been submitted successfully.")
+        embed = create_embed(ctx, "Suggestion", "Your suggestion has been submitted successfully.", show_command=False)
         await ctx.send(embed=embed)
 
     @commands.command()
