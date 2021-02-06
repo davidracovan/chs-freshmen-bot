@@ -338,13 +338,15 @@ class Suggestions(commands.Cog):
 
 bot.add_cog(Suggestions(bot))
 
-def create_embed(ctx, title, description=None, url=None, color=None, footer_enabled=True):
+def create_embed(ctx, title, description=None, url=None, color=None, show_command=True):
     if not color:
         color = discord.Embed.Empty
     embed = discord.Embed(title=title, description=description, url=url, color=color)
     embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
-    if footer_enabled:
+    if show_command:
         embed.set_footer(text=f'Server: {ctx.guild} | Command: {ctx.message.content}', icon_url=ctx.guild.icon_url)
+    else:
+        embed.set_footer(text=f'Server: {ctx.guild}', icon_url=ctx.guild.icon_url)
     return embed
 
 def log_command(ctx):
