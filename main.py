@@ -33,7 +33,7 @@ class CommandErrorHandler(commands.Cog):
         color = discord.Color.red()
         if isinstance(error, commands.CommandOnCooldown):
             retry_time = datetime.timedelta(second=round(error.retry_after, 1))
-            embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {retry_time.strftime('%-Mm%Ss')}s.", color=color)
+            embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {retry_time.strftime('%-Mm%Ss')}.", color=color)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
             embed = create_embed(ctx, "Error", f"You do not have the required permission to run this command ({','.join(error.missing_perms)}).", color=color)
