@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.message import PartialMessage
 import classschedule
 import os
-# from keep_alive import keep_alive
+from keep_alive import keep_alive
 
 # https://discord.com/api/oauth2/authorize?client_id=796805491186597968&permissions=2147483639&scope=bot
 
@@ -23,13 +23,6 @@ bot = commands.Bot(command_prefix=PREFIX, help_command=None)
 async def on_ready():
     print(f'Logged in as {bot.user}.')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f'{PREFIX}help'))
-
-# @bot.event
-# async def on_message(message):
-#     if message.author.id != 796805491186597968 and message.channel.id == 801630163866746904:
-#         await message.add_reaction('<:upvote:711333713316937819>')
-#         await message.add_reaction('<:downvote:711333713354686484>')
-#     await bot.process_commands(message)
 
 class CommandErrorHandler(commands.Cog):
     def __init__(self, bot):
@@ -356,6 +349,5 @@ def create_embed(ctx, title, description=None, url=None, color=None):
 def log_command(ctx):
     print(f'{ctx.author} ran {ctx.message.content}.')
 
-# keep_alive()
-# bot.run(os.environ['TOKEN']) # bot token
-bot.run("ODAyMjExMjU2MzgzNDM4ODYx.YAr7cw.bSz5W35uODQtGwD2aDY41Ekegl0")
+keep_alive()
+bot.run(os.environ['TOKEN']) # bot token
