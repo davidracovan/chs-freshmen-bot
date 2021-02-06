@@ -349,5 +349,4 @@ def create_embed(ctx, title, description=None, url=None, color=None, footer_enab
 def log_command(ctx):
     print(f'{ctx.author} ran {ctx.message.content}.')
 
-website.start()
 bot.run(os.environ['token']) # bot token
