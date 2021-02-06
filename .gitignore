@@ -4,3 +4,5 @@ config.json
 __pycache__/
 *.lock
 *.toml
+.vscode
+venv/

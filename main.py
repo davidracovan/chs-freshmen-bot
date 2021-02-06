@@ -279,7 +279,10 @@ class Fun(commands.Cog):
             ],
         ]
         response_category = responses[random.randint(0,2)]
-        desc = response_category[random.randint(0, len(response_category)-1)]
+        if ("lying" in arg) or ("lie" in arg):
+            desc = ":green_circle: :yellow_circle: :red_circle: How dare you! The magical 8 ball never lies! Shame on you! :red_circle: :yellow_circle: :green_circle:"
+        else:
+            desc = response_category[random.randint(0, len(response_category)-1)]
         embed = create_embed(ctx, 'Magic 8 Ball', description=desc)
         await ctx.send(embed=embed)
         log_command(ctx)
