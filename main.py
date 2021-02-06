@@ -7,6 +7,7 @@ from discord.ext import commands
 import classschedule
 import os
 import time
+import website
 
 # https://discord.com/api/oauth2/authorize?client_id=796805491186597968&permissions=2147483639&scope=bot
 
@@ -82,7 +83,6 @@ class Help(commands.Cog):
         embed.add_field(name=f'{PREFIX}schooldate <date> [all]', value="Tells you information about a specified date.\nThe `date` argument is required, and must be in the form `mm/dd/yyyy`.\nThe `all` argument is optional, and it will display information for both cohorts.", inline=False)
         await ctx.send(embed=embed)
         log_command(ctx)
-
 
 bot.add_cog(Help(bot))
 
@@ -349,4 +349,5 @@ def create_embed(ctx, title, description=None, url=None, color=None, footer_enab
 def log_command(ctx):
     print(f'{ctx.author} ran {ctx.message.content}.')
 
+website.start()
 bot.run(os.environ['token']) # bot token
