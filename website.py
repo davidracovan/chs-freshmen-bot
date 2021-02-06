@@ -8,8 +8,11 @@ def home():
     return "Hello. I am alive!"
 
 def run():
-  app.run(host='https://chs-freshmen-bot.herokuapp.com/')
+    app.run()
 
 def start():
     t = Thread(target=run)
     t.start()
+
+if __name__ == "__main__":
+    start()
