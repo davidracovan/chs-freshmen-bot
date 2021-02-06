@@ -7,7 +7,7 @@ from discord.ext import commands
 import classschedule
 import os
 from keep_alive import keep_alive
-import datetime
+import time
 
 # https://discord.com/api/oauth2/authorize?client_id=796805491186597968&permissions=2147483639&scope=bot
 
@@ -33,7 +33,8 @@ class CommandErrorHandler(commands.Cog):
         color = discord.Color.red()
         if isinstance(error, commands.CommandOnCooldown):
             retry_time = datetime.timedelta(second=round(error.retry_after, 1))
-            embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {retry_time.strftime('%-Mm%Ss')}.", color=color)
+            
+            embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {time.strftime('%Mm %Ss', time.gmtime(round(error.retry_after, 1)))}.", color=color)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
             embed = create_embed(ctx, "Error", f"You do not have the required permission to run this command ({','.join(error.missing_perms)}).", color=color)
