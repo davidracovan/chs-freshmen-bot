@@ -346,8 +346,8 @@ class Suggestions(commands.Cog):
 
         suggestions_channel = self.bot.get_channel(710959620667211817)
         embed = create_embed(ctx, "Suggestion", desc=suggestion, footer_enabled=False)
-        embed.add_field(name="Reason", value=reason)
-        embed.add_field(name="Notes", value=notes)
+        embed.add_field(name="Reason", value=reason, inline=False)
+        embed.add_field(name="Notes", value=notes, inline=False)
         msg = await suggestions_channel.send(embed=embed)
         await msg.add_reaction('<:upvote:711333713316937819>')
         await msg.add_reaction('<:downvote:711333713354686484>')
