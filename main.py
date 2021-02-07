@@ -328,7 +328,10 @@ class Suggestions(commands.Cog):
         await ctx.send(embed=embed)
         try:
             msg = await bot.wait_for("message", check=check, timeout=30)
-            reason = msg.content
+            if msg.content.lower() in ["none", "stop"]:
+                reason = msg.content
+            else:
+                reason = None
         except asyncio.TimeoutError:
             embed = create_error_embed(ctx, "Sorry, you didn't respond in time!")
             await ctx.send(embed=embed)
@@ -338,7 +341,10 @@ class Suggestions(commands.Cog):
         await ctx.send(embed=embed)
         try:
             msg = await bot.wait_for("message", check=check, timeout=30)
-            notes = msg.content
+            if msg.content.lower() in ["none", "stop"]:
+                notes = msg.content
+            else:
+                notes = None
         except asyncio.TimeoutError:
             embed = create_error_embed(ctx, "You didn't respond in time!")
             await ctx.send(embed=embed)
@@ -346,8 +352,10 @@ class Suggestions(commands.Cog):
 
         suggestions_channel = self.bot.get_channel(710959620667211817)
         embed = create_embed(ctx, "Suggestion", desc=suggestion, footer_enabled=False)
-        embed.add_field(name="Reason", value=reason, inline=False)
-        embed.add_field(name="Notes", value=notes, inline=False)
+        if reason:
+            embed.add_field(name="Reason", value=reason, inline=False)
+        if notes:
+            embed.add_field(name="Notes", value=notes, inline=False)
         msg = await suggestions_channel.send(embed=embed)
         await msg.add_reaction('<:upvote:711333713316937819>')
         await msg.add_reaction('<:downvote:711333713354686484>')
