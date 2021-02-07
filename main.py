@@ -329,9 +329,9 @@ class Suggestions(commands.Cog):
         try:
             msg = await bot.wait_for("message", check=check, timeout=30)
             if msg.content.lower() in ["none", "stop"]:
-                reason = msg.content
-            else:
                 reason = None
+            else:
+                reason = msg.content
         except asyncio.TimeoutError:
             embed = create_error_embed(ctx, "Sorry, you didn't respond in time!")
             await ctx.send(embed=embed)
@@ -342,9 +342,9 @@ class Suggestions(commands.Cog):
         try:
             msg = await bot.wait_for("message", check=check, timeout=30)
             if msg.content.lower() in ["none", "stop"]:
-                notes = msg.content
-            else:
                 notes = None
+            else:
+                notes = msg.content
         except asyncio.TimeoutError:
             embed = create_error_embed(ctx, "You didn't respond in time!")
             await ctx.send(embed=embed)
