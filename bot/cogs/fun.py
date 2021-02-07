@@ -7,13 +7,15 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(aliases=["hi"])
     async def hello(self, ctx):
+        f"""Greet the bot!"""
         embed = tools.create_embed(ctx, 'Hello!', desc=f'How are you, {ctx.author.mention}?')
         await ctx.send(embed=embed)
     
     @commands.command(name='8ball')
-    async def eightball(self, ctx, *, arg):
+    async def eightball(self, ctx, *, request):
+        f"""Consult the Magic 8 Ball. It is never wrong!"""
         responses = [
             [
                 ':green_circle: As I see it, yes. :green_circle:',
@@ -43,8 +45,7 @@ class Fun(commands.Cog):
             ],
         ]
         response_category = responses[random.randint(0,2)]
-        arg = arg.lower()
-        if ("lying" in arg.lower()) or ("lie" in arg.lower()):
+        if ("lying" in request.lower()) or ("lie" in request.lower()):
             print("test")
             desc = ":green_circle: :yellow_circle: :red_circle: How dare you! The magical 8 ball never lies! Shame on you! :red_circle: :yellow_circle: :green_circle:"
         else:
