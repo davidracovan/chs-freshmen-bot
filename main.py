@@ -30,12 +30,11 @@ class CommandErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        color = discord.Color.red()
         if isinstance(error, commands.CommandOnCooldown):
-            embed = create_embed(ctx, "Error", f"This command has been rate-limited. Please try again in {time.strftime('%Mm %Ss', time.gmtime(round(error.retry_after, 1)))}.", color=color)
+            embed = create_error_embed(ctx, f"This command has been rate-limited. Please try again in {time.strftime('%Mm %Ss', time.gmtime(round(error.retry_after, 1)))}.")
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingPermissions):
-            embed = create_embed(ctx, "Error", f"You do not have the required permission to run this command ({','.join(error.missing_perms)}).", color=color)
+            embed = create_error_embed(ctx, f"You do not have the required permission to run this command ({','.join(error.missing_perms)}).")
             await ctx.send(embed=embed)
         else:
             raise error
@@ -51,7 +50,7 @@ class Help(commands.Cog):
         if ctx.invoked_subcommand is None:
             author1 = await ctx.guild.fetch_member(688530998920871969)
             author2 = await ctx.guild.fetch_member(654874992672112650)
-            embed = create_embed(ctx, 'Bot Commands', description=f"Written by {author1.mention} and {author2.mention}.")
+            embed = create_embed(ctx, 'Bot Commands', desc=f"Written by {author1.mention} and {author2.mention}.")
             embed.add_field(name='Fun Commands', value=f'`{PREFIX}help fun`', inline=False)
             embed.add_field(name='Informational Commands', value=f'`{PREFIX}help info`', inline=False)
             embed.add_field(name='School Commands', value=f'`{PREFIX}help school`', inline=False)
@@ -140,7 +139,7 @@ class School(commands.Cog):
     async def register(self, ctx, blue_lunch, gold_lunch, cohort):
         self._register(ctx.author.id, blue_lunch, gold_lunch, cohort)
         desc = f'{ctx.author.mention}, you have been registered.'
-        embed = create_embed(ctx, 'User Registration', description=desc)
+        embed = create_embed(ctx, 'User Registration', desc=desc)
         embed.add_field(name='Blue Day Lunch', value=blue_lunch, inline=False)
         embed.add_field(name='Gold Day Lunch', value=gold_lunch, inline=False)
         embed.add_field(name='Cohort', value=cohort, inline=False)
@@ -151,7 +150,7 @@ class School(commands.Cog):
     async def register(self, ctx, blue_lunch, gold_lunch, cohort):
         self._register(ctx.author.id, blue_lunch, gold_lunch, cohort)
         desc = f'You have been registered.'
-        embed = create_embed(ctx, 'User Registration', description=desc)
+        embed = create_embed(ctx, 'User Registration', desc=desc)
         embed.add_field(name='Blue Day Lunch', value=blue_lunch, inline=False)
         embed.add_field(name='Gold Day Lunch', value=gold_lunch, inline=False)
         embed.add_field(name='Cohort', value=cohort, inline=False)
@@ -162,7 +161,7 @@ class School(commands.Cog):
     async def register_class(self, ctx, class_type, class_name):
         self._register_class(ctx.author.id, class_type.lower(), class_name)
         desc = f'{ctx.author.mention}, you have been registered.'
-        embed = create_embed(ctx, 'Class Registration', description=desc)
+        embed = create_embed(ctx, 'Class Registration', desc=desc)
         embed.add_field(name=class_type, value=class_name, inline=False)
         await ctx.send(embed=embed)
         log_command(ctx)
@@ -171,7 +170,7 @@ class School(commands.Cog):
     async def schoolday(self, ctx, arg=None):
         if ctx.invoked_subcommand is None:
             if not self._registration_checks(ctx):
-                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
+                embed = create_embed(ctx, 'Error', desc="You must be registered to use this command. Try appending `all` to the command, or registering.")
                 await ctx.send(embed=embed)
                 return
             user_info = self._get_user_info(str(ctx.author.id))
@@ -193,7 +192,7 @@ class School(commands.Cog):
     async def schoolweek(self, ctx):
         if ctx.invoked_subcommand is None:
             if not self._registration_checks(ctx):
-                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
+                embed = create_embed(ctx, 'Error', desc="You must be registered to use this command. Try appending `all` to the command, or registering.")
                 await ctx.send(embed=embed)
                 return
             user_info = self._get_user_info(str(ctx.author.id))
@@ -218,7 +217,7 @@ class School(commands.Cog):
     async def schooldate(self, ctx, date):
         if ctx.invoked_subcommand is None:
             if not self._registration_checks(ctx):
-                embed = create_embed(ctx, 'Error', description="You must be registered to use this command. Try appending `all` to the command, or registering.")
+                embed = create_embed(ctx, 'Error', desc="You must be registered to use this command. Try appending `all` to the command, or registering.")
                 await ctx.send(embed=embed)
                 return
             user_info = self._get_user_info(str(ctx.author.id))
@@ -244,12 +243,12 @@ class Fun(commands.Cog):
 
     @commands.command()
     async def hello(self, ctx):
-        embed = create_embed(ctx, 'Hello!', description=f'How are you, {ctx.author.mention}?')
+        embed = create_embed(ctx, 'Hello!', desc=f'How are you, {ctx.author.mention}?')
         await ctx.send(embed=embed)
         log_command(ctx)
     
     @commands.command(name='8ball')
-    async def eightball(self, ctx, arg):
+    async def eightball(self, ctx, *, arg):
         responses = [
             [
                 ':green_circle: As I see it, yes. :green_circle:',
@@ -279,11 +278,13 @@ class Fun(commands.Cog):
             ],
         ]
         response_category = responses[random.randint(0,2)]
-        if ("lying" in arg) or ("lie" in arg):
+        arg = arg.lower()
+        if ("lying" in arg.lower()) or ("lie" in arg.lower()):
+            print("test")
             desc = ":green_circle: :yellow_circle: :red_circle: How dare you! The magical 8 ball never lies! Shame on you! :red_circle: :yellow_circle: :green_circle:"
         else:
             desc = response_category[random.randint(0, len(response_category)-1)]
-        embed = create_embed(ctx, 'Magic 8 Ball', description=desc)
+        embed = create_embed(ctx, 'Magic 8 Ball', desc=desc)
         await ctx.send(embed=embed)
         log_command(ctx)
     
@@ -300,7 +301,7 @@ class Info(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        embed = create_embed(ctx, 'Pong!', description=f'`{round(bot.latency * 1000, 1)}ms`')
+        embed = create_embed(ctx, 'Pong!', desc=f'`{round(bot.latency * 1000, 1)}ms`')
         await ctx.send(embed=embed)
         log_command(ctx)
 
@@ -319,13 +320,39 @@ class Suggestions(commands.Cog):
 
     @commands.command()
     @commands.cooldown(1, 900, type=commands.BucketType.user)
-    async def suggest(self, ctx, *, arg):
+    async def suggest(self, ctx, *, suggestion):
+        def check(msg):
+            return msg.author == ctx.author and msg.channel == ctx.channel
+        
+        embed = create_embed(ctx, "Suggestion", "What is the reason for your suggestion?")
+        await ctx.send(embed=embed)
+        try:
+            msg = await bot.wait_for("message", check=check, timeout=30)
+            reason = msg.content
+        except asyncio.TimeoutError:
+            embed = create_error_embed(ctx, "Sorry, you didn't respond in time!")
+            await ctx.send(embed=embed)
+            return
+
+        embed = create_embed(ctx, "Suggestion", "What else you would like to add? Type \"None\" if you don't have anything else.")
+        await ctx.send(embed=embed)
+        try:
+            msg = await bot.wait_for("message", check=check, timeout=30)
+            notes = msg.content
+        except asyncio.TimeoutError:
+            embed = create_error_embed(ctx, "You didn't respond in time!")
+            await ctx.send(embed=embed)
+            return
+
         suggestions_channel = self.bot.get_channel(710959620667211817)
-        embed = create_embed(ctx, "Suggestion", arg, footer_enabled=False)
+        embed = create_embed(ctx, "Suggestion", desc=suggestion, footer_enabled=False)
+        embed.add_field(name="Reason", value=reason)
+        embed.add_field(name="Notes", value=notes)
         msg = await suggestions_channel.send(embed=embed)
         await msg.add_reaction('<:upvote:711333713316937819>')
         await msg.add_reaction('<:downvote:711333713354686484>')
-        embed = create_embed(ctx, "Suggestion", "Your suggestion has been submitted successfully.")
+
+        embed = create_embed(ctx, "Suggestion", desc="Your suggestion has been submitted successfully!")
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -335,21 +362,29 @@ class Suggestions(commands.Cog):
         msg = await suggestions_channel.fetch_message(arg)
         await msg.delete()
         desc = f"Suggestion with ID {arg} has been removed."
-        embed = create_embed(ctx, "Suggestion Removal", description=desc)
+        embed = create_embed(ctx, "Suggestion Removal", desc=desc)
         await ctx.send(embed=embed)
 
 bot.add_cog(Suggestions(bot))
 
-def create_embed(ctx, title, description=None, url=None, color=None, footer_enabled=True):
+
+def create_embed(ctx, title, desc=None, url=None, color=None, footer_enabled=True):
     if not color:
         color = discord.Embed.Empty
-    embed = discord.Embed(title=title, description=description, url=url, color=color)
+    embed = discord.Embed(title=title, description=desc, url=url, color=color)
     embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
     if footer_enabled:
         embed.set_footer(text=f'Server: {ctx.guild} | Command: {ctx.message.content}', icon_url=ctx.guild.icon_url)
     return embed
 
+def create_error_embed(ctx, desc):
+    color = discord.Embed.Empty
+    embed = discord.Embed(title="Error", description=desc, color=color)
+    embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+    embed.set_footer(text=f'Server: {ctx.guild} | Command: {ctx.message.content}', icon_url=ctx.guild.icon_url)
+    return embed
+
 def log_command(ctx):
     print(f'{ctx.author} ran {ctx.message.content}.')
 
-bot.run(os.environ['token']) # bot token
+bot.run(os.environ['TOKEN']) # bot token
