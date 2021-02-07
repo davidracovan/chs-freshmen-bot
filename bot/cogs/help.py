@@ -2,6 +2,13 @@ import discord
 from discord.ext import commands
 from bot import tools
 
+from bot.cogs.suggestions import Suggestions
+from bot.cogs.events import Events
+from bot.cogs.school import School
+from bot.cogs.fun import Fun
+from bot.cogs.help import Help
+from bot.cogs.info import Info
+
 class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -20,9 +27,10 @@ class Help(commands.Cog):
     @help.command(name='fun')
     async def _fun(self, ctx):
         embed = tools.create_embed(ctx, 'Fun Commands')
-        embed.add_field(name=f'{ctx.prefix}_hello', value='Allows you to greet the bot.', inline=False)
-        embed.add_field(name=f'{ctx.prefix}8ball <question>', value='Ask a question, get an answer.', inline=False)
-        embed.add_field(name=f'{ctx.prefix}rng <minimum> <maximum>', value='Generate a random number between two numbers.', inline=False)
+        for command in Help.get_commands():
+            embed.add_field(name=f'{ctx.prefix}{command.name}', value='Allows you to greet the bot.', inline=False)
+            embed.add_field(name=f'{ctx.prefix}8ball <question>', value='Ask a question, get an answer.', inline=False)
+            embed.add_field(name=f'{ctx.prefix}rng <minimum> <maximum>', value='Generate a random number between two numbers.', inline=False)
         await ctx.send(embed=embed)
 
     @help.command(name='info')
