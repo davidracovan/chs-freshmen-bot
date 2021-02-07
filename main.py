@@ -324,7 +324,7 @@ class Suggestions(commands.Cog):
         def check(msg):
             return msg.author == ctx.author and msg.channel == ctx.channel
         
-        embed = create_embed(ctx, "Suggestion", "What is the reason for your suggestion?")
+        embed = create_embed(ctx, "Suggestion Reason", "What is the reason for your suggestion?")
         await ctx.send(embed=embed)
         try:
             msg = await bot.wait_for("message", check=check, timeout=30)
@@ -337,7 +337,7 @@ class Suggestions(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        embed = create_embed(ctx, "Suggestion", "What else you would like to add? Type \"None\" if you don't have anything else.")
+        embed = create_embed(ctx, "Suggestion Notes", "What else you would like to add? Type \"None\" if you don't have anything else.")
         await ctx.send(embed=embed)
         try:
             msg = await bot.wait_for("message", check=check, timeout=30)
