@@ -12,7 +12,7 @@ class Help(commands.Cog):
             author1 = await ctx.guild.fetch_member(688530998920871969)
             author2 = await ctx.guild.fetch_member(654874992672112650)
             embed = tools.create_embed(ctx, 'Bot Commands', desc=f"Written by {author1.mention} and {author2.mention}.")
-            embed.add_field(name='Fun Commands', value=f'`{ctx.ctx.prefix}help fun`', inline=False)
+            embed.add_field(name='Fun Commands', value=f'`{ctx.prefix}help fun`', inline=False)
             embed.add_field(name='Informational Commands', value=f'`{ctx.prefix}help info`', inline=False)
             embed.add_field(name='School Commands', value=f'`{ctx.prefix}help school`', inline=False)
             await ctx.send(embed=embed)
