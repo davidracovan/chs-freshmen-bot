@@ -9,6 +9,7 @@ class Info(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
+        """Testing docstring"""
         embed = tools.create_embed(ctx, 'Pong!', desc=f'`{round(self.bot.latency * 1000, 1)}ms`')
         await ctx.send(embed=embed)
 
