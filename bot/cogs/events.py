@@ -3,7 +3,7 @@ from discord.ext import commands
 from bot import tools
 import asyncio
 import time
-import psycopg2
+# import psycopg2
 import os
 
 class Events(commands.Cog):
