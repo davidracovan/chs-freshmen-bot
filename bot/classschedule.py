@@ -2,8 +2,9 @@ import json
 import re
 import math
 from datetime import date,datetime,time,timedelta
+import importlib.resources
 
-with open("school_info.json") as f:
+with open("bot/school_info.json") as f:
     SCHOOL_INFO_DICT = json.load(f)
 
 def get_current_day(user_info=None):

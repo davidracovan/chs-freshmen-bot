@@ -10,6 +10,11 @@ class Suggestions(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 900, type=commands.BucketType.user)
     async def suggest(self, ctx, *, suggestion):
+        """Suggest something for the server. 
+        Suggestions will go into #suggestions.
+        The bot will prompt for the reason for the suggestion, then any notes.
+        You may specify "none" for either the reason or the notes.
+        """
         def check(msg):
             return msg.author == ctx.author and msg.channel == ctx.channel
         
@@ -54,10 +59,12 @@ class Suggestions(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_messages=True)
-    async def removesuggestion(self, ctx, arg: int):
+    async def removesuggestion(self, ctx, id: int):
+        """This command allows for anyone with the "Manage Messages" 
+        permission to remove a suggestion."""
         suggestions_channel = self.bot.get_channel(710959620667211817)
-        msg = await suggestions_channel.fetch_message(arg)
+        msg = await suggestions_channel.fetch_message(id)
         await msg.delete()
-        desc = f"Suggestion with ID {arg} has been removed."
+        desc = f"Suggestion with ID {id} has been removed."
         embed = tools.create_embed(ctx, "Suggestion Removal", desc=desc)
         await ctx.send(embed=embed)
