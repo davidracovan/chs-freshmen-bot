@@ -15,11 +15,11 @@ class Events(commands.Cog):
         print(f'Logged in as {self.bot.user}.')
         await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f'c?help | ccs.k12.in.us/chs'))
 
-    async def open_psql(self):
-        DATABASE_URL = os.environ['DATABASE_URL']
-        self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    # async def open_psql(self):
+    #     DATABASE_URL = os.environ['DATABASE_URL']
+    #     self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         
-    @commands.before_invoke(open_psql())
+    # @commands.before_invoke(open_psql())
     
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):

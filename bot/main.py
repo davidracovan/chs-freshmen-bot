@@ -23,7 +23,8 @@ def start():
     bot.add_cog(Help(bot))
     bot.add_cog(Info(bot))
     bot.add_cog(TicTacToe(bot))
-    bot.run(os.environ['TOKEN']) # bot token
+    # bot.run(os.environ['TOKEN']) # bot token
+    bot.run('ODAyMjExMjU2MzgzNDM4ODYx.YAr7cw.0b3fwnlVJBO_Bq-qLiZIucHXID0')
 
 if __name__ == "__main__":
     start()
