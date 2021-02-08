@@ -53,7 +53,6 @@ class Fun(commands.Cog):
             response_category = responses[2]
 
         if ("lying" in request.lower()) or ("lie" in request.lower()):
-            print("test")
             desc = "🟢 🟡 🔴 How dare you! The magical 8 ball never lies! Shame on you! 🔴 🟡 🟢"
         else:
             desc = response_category[random.randint(0, len(response_category)-1)]
