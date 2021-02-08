@@ -3,7 +3,8 @@ from discord.ext import commands
 from bot import tools
 import asyncio
 import time
-import json
+import psycopg2
+import os
 
 class Events(commands.Cog):
     def __init__(self, bot):
@@ -14,6 +15,12 @@ class Events(commands.Cog):
         print(f'Logged in as {self.bot.user}.')
         await self.bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=f'c?help | ccs.k12.in.us/chs'))
 
+    async def open_psql(self):
+        DATABASE_URL = os.environ['DATABASE_URL']
+        self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        
+    @commands.before_invoke(open_psql())
+    
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
@@ -32,6 +39,7 @@ class Events(commands.Cog):
             embed = tools.create_error_embed(ctx, f"Uh oh! Something went wrong, and this error wasn't anticipated. Sorry about that! I'll ping the owners of this bot to fix it.\nError: {error.__class__.__name__}")
             author1 = await ctx.guild.fetch_member(688530998920871969)
             await ctx.send(f"{author1.mention}")
+            raise error
         else:
             embed = tools.create_error_embed(ctx, f"Ok, something really went wrong. This error message isn't supposed to show up, so we messed up pretty badly lmfao")
         await ctx.send(embed=embed)
