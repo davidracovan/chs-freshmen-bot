@@ -92,10 +92,8 @@ class TicTacToe(commands.Cog):
         
         if active_game and (user.id != 802211256383438861):
             location = compare_dict[reaction.emoji]
-            if user.id == active_game["p1"].id:
-                await self.update_game(reaction.message.id, active_game, location, "p1")
-            if user.id == active_game["p2"].id:
-                await self.update_game(reaction.message.id, active_game, location, "p2")
+            if user.id == active_game[active_game['turn']].id:
+                await self.update_game(reaction.message.id, active_game, location, active_game['turn'])
             await reaction.remove(user)
         
 
