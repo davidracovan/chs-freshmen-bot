@@ -12,6 +12,7 @@ class TicTacToe(commands.Cog):
     @commands.command(aliases=['tic', 'tac', 'toe', 'ttt'])
     async def tictactoe(self, ctx, player2: discord.User):
         embed = tools.create_embed(ctx, "Tic Tac Toe Request", desc=f'{player2.mention}, you have 45 seconds to respond to {ctx.author.mention}\'s request to play Tic Tac Toe.\nType "y" or "yes" to accept.')
+        await ctx.send(embed=embed)
         def check(msg):
             return msg.author == player2 and msg.channel == ctx.channel
 
@@ -69,7 +70,7 @@ class TicTacToe(commands.Cog):
             game['turn'] = 'p1'
         self.games[game_id] = game
         board_text = self.create_board_text(game['board'])
-        embed = tools.create_embed('Tic Tac Toe', description=board_text)
+        embed = discord.Embed(title='Tic Tac Toe', description=board_text)
         footer = f'{game["p1"].name} playing {game["p2"].name}\n{game[game["turn"]].name}\'s turn'
         embed.set_footer(text=footer)
         await game['msg'].edit(embed=embed)
