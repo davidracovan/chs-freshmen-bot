@@ -11,14 +11,15 @@ class TicTacToe(commands.Cog):
 
     @commands.command(aliases=['tic', 'tac', 'toe', 'ttt'])
     async def tictactoe(self, ctx, player2: discord.User):
+        embed = tools.create_embed(ctx, "Tic Tac Toe Request", desc=f'{player2.mention}, you have 45 seconds to respond to {ctx.author.mention}\'s request to play Tic Tac Toe.\nType "y" or "yes" to accept.')
         def check(msg):
             return msg.author == player2 and msg.channel == ctx.channel
 
-        msg = await self.bot.wait_for('message', check=check, timeout=60)
-        if msg.content.lower() == 'y':
+        msg = await self.bot.wait_for('message', check=check, timeout=45)
+        if msg.content.lower() in ['y','yes']:
             await self.start_game(ctx, player2)
 
-    async def start_game(self, ctx, player2):
+    async def start_game(self, ctx, p2):
         game = {'board': {
             'a1':'', 
             'b1':'', 
@@ -32,12 +33,14 @@ class TicTacToe(commands.Cog):
             }
         }
 
-        game['player1'] = ctx.message.author
-        game['player2'] = player2
+        game['p1'] = ctx.message.author
+        game['p2'] = p2
+        game['turn'] = 'p1'
 
         board_text = self.create_board_text(game['board'])
         embed = discord.Embed(title='Tic Tac Toe', description=board_text)
-        embed.set_footer(text=f'{game["player1"].mention} playing {game["player2"].mention}')
+        footer = f'{game["p1"].name} playing {game["p2"].name}\n{game[game["turn"]].name}\'s turn'
+        embed.set_footer(text=footer)
         msg = await ctx.send(embed=embed)
         for arrow in ['↖️','⬆️','↗️','⬅️','⏺','➡️','↙️','⬇️','↘️']:
             await msg.add_reaction(arrow)
@@ -58,12 +61,17 @@ class TicTacToe(commands.Cog):
             text += '\n'
         return text
 
-    async def update_board(self, game_id, game, location, player):
+    async def update_game(self, game_id, game, location, player):
         game['board'][location] = player
+        if player == 'p1':
+            game['turn'] = 'p2'
+        if player == 'p2':
+            game['turn'] = 'p1'
         self.games[game_id] = game
         board_text = self.create_board_text(game['board'])
-        embed = discord.Embed(title='Tic Tac Toe', description=board_text)
-        embed.set_footer(text=f'{game["player1"].mention} playing {game["player2"].mention}')
+        embed = tools.create_embed('Tic Tac Toe', description=board_text)
+        footer = f'{game["p1"].name} playing {game["p2"].name}\n{game[game["turn"]].name}\'s turn'
+        embed.set_footer(text=footer)
         await game['msg'].edit(embed=embed)
 
     @commands.Cog.listener()
@@ -83,10 +91,10 @@ class TicTacToe(commands.Cog):
         
         if active_game and (user.id != 802211256383438861):
             location = compare_dict[reaction.emoji]
-            if user.id == active_game["player1"].id:
-                await self.update_board(reaction.message.id, active_game, location, "p1")
-            if user.id == active_game["player2"].id:
-                await self.update_board(reaction.message.id, active_game, location, "p2")
+            if user.id == active_game["p1"].id:
+                await self.update_game(reaction.message.id, active_game, location, "p1")
+            if user.id == active_game["p2"].id:
+                await self.update_game(reaction.message.id, active_game, location, "p2")
             await reaction.remove(user)
         
 
