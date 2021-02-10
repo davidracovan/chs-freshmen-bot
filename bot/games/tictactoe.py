@@ -9,7 +9,7 @@ class TicTacToe(commands.Cog):
         self.bot = bot
         self.games = {}
 
-    @commands.command(aliases=['tic', 'tac', 'toe', 'ttt'])
+    @commands.command(aliases=['tic', 'ttt'])
     async def tictactoe(self, ctx, player2: discord.User):
         embed = tools.create_embed(ctx, "Tic Tac Toe Request", desc=f'{player2.mention}, you have 45 seconds to respond to {ctx.author.mention}\'s request to play Tic Tac Toe.\nType "y" or "yes" to accept.')
         await ctx.send(embed=embed)
@@ -37,6 +37,7 @@ class TicTacToe(commands.Cog):
         game['p1'] = ctx.message.author
         game['p2'] = p2
         game['turn'] = 'p1'
+        game['winner'] = ''
 
         board_text = self.create_board_text(game['board'])
         embed = discord.Embed(title='Tic Tac Toe', description=board_text)
@@ -68,12 +69,41 @@ class TicTacToe(commands.Cog):
             game['turn'] = 'p2'
         if player == 'p2':
             game['turn'] = 'p1'
+        game['winner'] = self.check_victory(game)
         self.games[game_id] = game
         board_text = self.create_board_text(game['board'])
+        
         embed = discord.Embed(title='Tic Tac Toe', description=board_text)
-        footer = f'{game["p1"].name} playing {game["p2"].name}\n{game[game["turn"]].name}\'s turn'
+        if game['winner']:
+            footer = f'{game["p1"].name} playing {game["p2"].name}\n{game[game["winner"]].name} won!'
+        else:
+            footer = f'{game["p1"].name} playing {game["p2"].name}\n{game[game["turn"]].name}\'s turn'
         embed.set_footer(text=footer)
         await game['msg'].edit(embed=embed)
+    
+    def check_victory(self, game):
+        iter_list = [['a1','b1','c1'],['a2','b2','c2'],['a3','b3','c3']]
+        winner = None
+
+        # vertical
+        for i in range(0,2):
+            if game['board'][iter_list[i][0]] == game['board'][iter_list[i][1]] == game['board'][iter_list[i][2]]:
+                winner = game['board'][iter_list[i][0]]
+        
+        # horizontal
+        for i in range(0,2):
+            if game['board'][iter_list[0][i]] == game['board'][iter_list[1][i]] == game['board'][iter_list[2][i]]:
+                winner = game['board'][iter_list[0][i]]
+        
+        # diagonal
+        if game['board'][iter_list[0][0]] == game['board'][iter_list[1][1]] == game['board'][iter_list[2][2]]:
+            winner = game['board'][iter_list[1][1]]
+
+        # anti-diagonal
+        if game['board'][iter_list[2][0]] == game['board'][iter_list[1][1]] == game['board'][iter_list[0][2]]:
+            winner = game['board'][iter_list[1][1]]
+
+        return winner
 
     @commands.Cog.listener()
     async def on_reaction_add(self, reaction, user):
@@ -90,9 +120,9 @@ class TicTacToe(commands.Cog):
         }
         active_game = self.games.get(reaction.message.id)
         
-        if active_game and (user.id != 802211256383438861):
+        if active_game and (user.id != self.bot.user.id):
             location = compare_dict[reaction.emoji]
-            if user.id == active_game[active_game['turn']].id:
+            if user.id == active_game[active_game['turn']].id and not active_game['winner']:
                 if active_game['board'][location] == '':
                     await self.update_game(reaction.message.id, active_game, location, active_game['turn'])
             await reaction.remove(user)
